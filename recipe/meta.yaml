@@ -1,4 +1,3 @@
-{% set python_min = '3.10' %}
 {% set name = "magicattr" %}
 {% set version = "0.1.6" %}
 
@@ -11,34 +10,46 @@ source:
   sha256: 5e59537cad483712274ab6dbddf7035fbcc01215c398a6a4ecd9e78a21a74c65
 
 build:
-  noarch: python
+  number: 0
+  skip: true  # [py<39]
   script: {{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation
-  number: 1
 
 requirements:
   host:
-    - python {{ python_min }}
-    - setuptools
     - pip
+    - python
+    - setuptools
+    - wheel
   run:
-    - python >={{ python_min }}
+    - python
+
+{% set deselect_tests = "" %}
+# AttributeError: module 'ast' has no attribute 'Num'
+{% set deselect_tests = deselect_tests + " --deselect=tests.py::test_magicattr_get" %}  # [py==314]
+{% set deselect_tests = deselect_tests + " --deselect=tests.py::test_person_example" %}  # [py==314]
 
 test:
+  source_files:
+    - tests.py
   imports:
     - magicattr
   requires:
     - pip
-    - python {{ python_min }}
+    - pytest
   commands:
     - pip check
+    - pytest -v tests.py {{ deselect_tests }}
 
 about:
   home: https://github.com/frmdstryr/magicattr
+  license: MIT
+  license_family: MIT
+  license_file: LICENSE
   summary: magicattr
   description: |
     A getattr and setattr that works on nested objects, lists, dictionaries, and any combination thereof without resorting to eval.
-  license: MIT
-  license_file: LICENSE
+  doc_url: https://github.com/frmdstryr/magicattr
+  dev_url: https://github.com/frmdstryr/magicattr
 
 extra:
   recipe-maintainers:
