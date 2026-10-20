@@ -1,13 +1,17 @@
 {% set name = "magicattr" %}
-{% set version = "0.1.6" %}
+{% set version = "0.1.7" %}
+{% set deselect_tests = "" %}
+{% set deselect_tests = 'deselect_tests + " --deselect=tests.py::test_magicattr_get"' %}  # [py==314]
+{% set deselect_tests = 'deselect_tests + " --deselect=tests.py::test_person_example"' %}  # [py==314]
 
+# AttributeError: module 'ast' has no attribute 'Num'
 package:
   name: {{ name|lower }}
   version: {{ version }}
 
 source:
   url: https://github.com/frmdstryr/{{ name }}/archive/refs/tags/v{{ version }}.tar.gz
-  sha256: 5e59537cad483712274ab6dbddf7035fbcc01215c398a6a4ecd9e78a21a74c65
+  sha256: 5d9495ed1bc7b76835512ceec76862d26c935bed40335c8119b431f09806683e
 
 build:
   number: 0
@@ -22,11 +26,6 @@ requirements:
     - wheel
   run:
     - python
-
-{% set deselect_tests = "" %}
-# AttributeError: module 'ast' has no attribute 'Num'
-{% set deselect_tests = deselect_tests + " --deselect=tests.py::test_magicattr_get" %}  # [py==314]
-{% set deselect_tests = deselect_tests + " --deselect=tests.py::test_person_example" %}  # [py==314]
 
 test:
   source_files:
